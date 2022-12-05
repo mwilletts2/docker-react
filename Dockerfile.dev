@@ -1,0 +1,16 @@
+FROM node:16-alpine
+
+USER node
+
+RUN mkdir -p /home/node/app
+WORKDIR home/node/app
+
+RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
+COPY ./zscaler.crt /usr/local/share/ca-certificates/mycert.crt
+RUN update-ca-certificates
+
+COPY --chown=node:node ./package.json ./
+RUN npm install
+COPY --chown=node:node ./ ./
+ 
+CMD ["npm", "start"]
